@@ -111,6 +111,8 @@ With this option a container will exited right after certificates update.
 * **CHICKENEGG**: Set this to 1 to generate a self signed certificate before attempting to start the process with no previous certificate. Some http servers (nginx) might not start up without a certificate file present.
 * **STAGING**: Set this to 1 to use the staging environment of letsencrypt to prevent rate limiting while working on your setup.
 
-## Credits
+## References
 
+Code samples are taken from the below repositories.
 https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion
+https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion/blob/522d396b0dc065d582261a69c6eee31bb57a5ae3/app/functions.sh
