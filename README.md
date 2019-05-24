@@ -3,12 +3,12 @@
 
 Letsencrypt cert auto getting and renewal script based on [letsencrypt](https://quay.io/repository/letsencrypt/letsencrypt) base image.
 
-  - [GitHub](https://github.com/kvaps/docker-letsencrypt-webroot)
-  - [DockerHub](https://hub.docker.com/r/kvaps/letsencrypt-webroot/)
+  - [GitHub](https://github.com/DefragLabs/docker-letsencrypt-webroot)
+  - [DockerHub](https://hub.docker.com/r/defraglabs/docker-letsencrypt-webroot/)
 
 ## Status
 
-This project is effectively unmaintained. I will do my best to shepherd pull requests, but cannot guarantee a prompt response and do not have bandwidth to address issues or add new features. Please let me know via an issue if you'd be interested in taking ownership of docker-letsencrypt-webroot.
+Maintained
 
 ## Usage
 
