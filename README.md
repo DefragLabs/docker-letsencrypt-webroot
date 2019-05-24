@@ -50,17 +50,8 @@ This project is effectively unmaintained. I will do my best to shepherd pull req
 
 ## Renew hook
 
-You can also assign hook for your container, it will be launched after letsencrypt receive a new certificate.
-
-* This feature requires a passthrough docker.sock into letsencrypt container: `-v /var/run/docker.sock:/var/run/docker.sock`
-* Also add `--link` to your container. Example: `--link some-nginx`
-* Then add `LE_RENEW_HOOK` environment variable to your container:
-
-Example hooks:
-  - nginx reload: `-e 'LE_RENEW_HOOK=docker kill -s HUP @CONTAINER_NAME@'`
-  - container restart: `-e 'LE_RENEW_HOOK=docker restart @CONTAINER_NAME@'`
-
-For more detailed example, see the docker-compose configuration
+Add this label `com.github.defraglabs.docker-letsencrypt-webroot.nginx: "true"` to your `nginx` container.
+Once certificates are renewed, this container will be restarted.
 
 ## Docker-compose
 
@@ -72,6 +63,8 @@ nginx:
   restart: always
   image: nginx
   hostname: example.com
+  labels:
+    com.github.defraglabs.docker-letsencrypt-webroot.nginx: "true"
   volumes:
     - /etc/localtime:/etc/localtime:ro
     - ./nginx:/etc/nginx:ro
@@ -80,8 +73,6 @@ nginx:
   ports:
     - 80:80
     - 443:443
-  environment:
-    - LE_RENEW_HOOK=docker kill -s HUP @CONTAINER_NAME@
 
 letsencrypt:
   restart: always
