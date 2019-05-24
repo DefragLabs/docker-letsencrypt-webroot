@@ -27,32 +27,51 @@ LE_DOMAINS=("${DARRAYS[*]/#/-d }")
 exp_limit="${EXP_LIMIT:-30}"
 check_freq="${CHECK_FREQ:-30}"
 
+docker_api() {
+    local scheme
+    local curl_opts=(-s)
+    local method=${2:-GET}
+    # data to POST
+    if [[ -n "${3:-}" ]]; then
+        curl_opts+=(-d "$3")
+    fi
+    if [[ -z "$DOCKER_HOST" ]];then
+        echo "Error DOCKER_HOST variable not set" >&2
+        return 1
+    fi
+    if [[ $DOCKER_HOST == unix://* ]]; then
+        curl_opts+=(--unix-socket ${DOCKER_HOST#unix://})
+        scheme='http://localhost'
+    else
+        scheme="http://${DOCKER_HOST#*://}"
+    fi
+    [[ $method = "POST" ]] && curl_opts+=(-H 'Content-Type: application/json')
+    curl "${curl_opts[@]}" -X${method} ${scheme}$1
+}
+
+docker_restart() {
+    local id="${1?missing id}"
+    docker_api "/containers/$id/restart" "POST"
+}
+
+labeled_cid() {
+    docker_api "/containers/json" | jq -r '.[] | select(.Labels["'$1'"])|.Id'
+}
+
+get_nginx_container() {
+    local nginx_cid="$(labeled_cid com.github.defraglabs.docker-letsencrypt-webroot.nginx)"
+
+    [[ -n "$nginx_cid" ]] && echo "$nginx_cid"
+
+}
+
 le_hook() {
-    all_links=($(env | grep -oP '^[0-9A-Z_-]+(?=_ENV_LE_RENEW_HOOK)'))
-    compose_links=($(env | grep -oP '^[0-9A-Z]+_[a-zA-Z0-9_.-]+_[0-9]+(?=_ENV_LE_RENEW_HOOK)'))
-    
-    except_links=($(
-        for link in ${compose_links[@]}; do
-            compose_project=$(echo $link | cut -f1 -d"_")
-            compose_name=$(echo $link | cut -f2- -d"_" | sed 's/_[^_]*$//g')
-            compose_instance=$(echo $link | grep -o '[^_]*$')
-            echo ${compose_name}_${compose_instance}
-            echo ${compose_name}
-        done
-    ))
-    
-    containers=($(
-        for link in ${all_links[@]}; do
-            [[ " ${except_links[@]} " =~ " ${link} " ]] || echo $link
-        done
-    ))
-    
-    for container in ${containers[@]}; do
-        command=$(eval echo \$${container}_ENV_LE_RENEW_HOOK)
-        command=$(echo $command | sed "s/@CONTAINER_NAME@/${container,,}/g")
-        echo "[INFO] Run: $command"
-        eval $command
-    done
+    local nginx_cid=$(get_nginx_container)
+
+    echo "Restarting nginx container $nginx_cid"
+    docker_restart "$nginx_cid"
+
+    echo "nginx restarted successfully"
 }
 
 le_fixpermissions() {
