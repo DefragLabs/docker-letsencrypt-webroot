@@ -1,0 +1,32 @@
+version: '3.3'
+
+services:
+  nginx:
+    build:
+      dockerfile: ./nginx/Dockerfile
+      context: .
+    ports:
+      - '8070:8070'
+    labels:
+      com.github.defraglabs.docker-letsencrypt-webroot.nginx: "true"
+
+  letsencrypt:
+    restart: always
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/ubuntu/app/letsencrypt/conf:/etc/letsencrypt
+      - /home/ubuntu/app/letsencrypt/html:/tmp/letsencrypt
+    links:
+      - nginx
+    environment:
+      - DOMAINS=sample
+      - EMAIL=sample@gm.com
+      - WEBROOT_PATH=/tmp/letsencrypt
+      - EXP_LIMIT=15
+      - CHECK_FREQ=15
+      - CHICKENEGG=0
+      - STAGING=0
