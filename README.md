@@ -3,12 +3,12 @@
 
 Letsencrypt cert auto getting and renewal script based on [letsencrypt](https://quay.io/repository/letsencrypt/letsencrypt) base image.
 
-  - [GitHub](https://github.com/kvaps/docker-letsencrypt-webroot)
-  - [DockerHub](https://hub.docker.com/r/kvaps/letsencrypt-webroot/)
+  - [GitHub](https://github.com/DefragLabs/docker-letsencrypt-webroot)
+  - [DockerHub](https://hub.docker.com/r/defraglabs/docker-letsencrypt-webroot/)
 
 ## Status
 
-This project is effectively unmaintained. I will do my best to shepherd pull requests, but cannot guarantee a prompt response and do not have bandwidth to address issues or add new features. Please let me know via an issue if you'd be interested in taking ownership of docker-letsencrypt-webroot.
+Maintained
 
 ## Usage
 
@@ -50,17 +50,8 @@ This project is effectively unmaintained. I will do my best to shepherd pull req
 
 ## Renew hook
 
-You can also assign hook for your container, it will be launched after letsencrypt receive a new certificate.
-
-* This feature requires a passthrough docker.sock into letsencrypt container: `-v /var/run/docker.sock:/var/run/docker.sock`
-* Also add `--link` to your container. Example: `--link some-nginx`
-* Then add `LE_RENEW_HOOK` environment variable to your container:
-
-Example hooks:
-  - nginx reload: `-e 'LE_RENEW_HOOK=docker kill -s HUP @CONTAINER_NAME@'`
-  - container restart: `-e 'LE_RENEW_HOOK=docker restart @CONTAINER_NAME@'`
-
-For more detailed example, see the docker-compose configuration
+Add this label `com.github.defraglabs.docker-letsencrypt-webroot.nginx: "true"` to your `nginx` container.
+Once certificates are renewed, this container will be restarted.
 
 ## Docker-compose
 
@@ -72,6 +63,8 @@ nginx:
   restart: always
   image: nginx
   hostname: example.com
+  labels:
+    com.github.defraglabs.docker-letsencrypt-webroot.nginx: "true"
   volumes:
     - /etc/localtime:/etc/localtime:ro
     - ./nginx:/etc/nginx:ro
@@ -80,8 +73,6 @@ nginx:
   ports:
     - 80:80
     - 443:443
-  environment:
-    - LE_RENEW_HOOK=docker kill -s HUP @CONTAINER_NAME@
 
 letsencrypt:
   restart: always
@@ -119,3 +110,9 @@ With this option a container will exited right after certificates update.
 * **CHECK_FREQ**: The number of days how often to perform checks. Defaults to `30`.
 * **CHICKENEGG**: Set this to 1 to generate a self signed certificate before attempting to start the process with no previous certificate. Some http servers (nginx) might not start up without a certificate file present.
 * **STAGING**: Set this to 1 to use the staging environment of letsencrypt to prevent rate limiting while working on your setup.
+
+## References
+
+Code samples are taken from the below repositories.
+https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion
+https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion/blob/522d396b0dc065d582261a69c6eee31bb57a5ae3/app/functions.sh
