@@ -3,7 +3,7 @@ version: '3.3'
 services:
   nginx:
     build:
-      dockerfile: ./nginx/Dockerfile
+      dockerfile: ./test/nginx/Dockerfile
       context: .
     ports:
       - '8070:8070'
