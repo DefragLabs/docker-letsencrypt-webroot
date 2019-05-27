@@ -116,3 +116,9 @@ With this option a container will exited right after certificates update.
 Code samples are taken from the below repositories.
 https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion
 https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion/blob/522d396b0dc065d582261a69c6eee31bb57a5ae3/app/functions.sh
+
+## Creating docker image and pushing to dockerhub.
+
+`docker build -t defraglabs/docker-letsencrypt-webroot:v1.0.0`
+
+`docker push defraglabs/docker-letsencrypt-webroot:v1.0.0`
