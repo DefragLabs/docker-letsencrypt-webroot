@@ -109,6 +109,15 @@ With this option a container will exited right after certificates update.
 * **CHICKENEGG**: Set this to 1 to generate a self signed certificate before attempting to start the process with no previous certificate. Some http servers (nginx) might not start up without a certificate file present.
 * **STAGING**: Set this to 1 to use the staging environment of letsencrypt to prevent rate limiting while working on your setup.
 
+## Caveats
+
+When generating the certificates for the first time, make sure that nginx conf doesn't have `listen 443` 
+and `ssl_certificate /etc/letsencrypt/live/${SERVER_NAME}/fullchain.pem;` as these files are yet to be generated.
+
+Also remove any `http` to `https` redirect in nginx conf. This can be changed once certs are generated.
+
+Once certificates are generated, then the above lines can be uncommented.
+
 ## References
 
 Code samples are taken from the below repositories.
