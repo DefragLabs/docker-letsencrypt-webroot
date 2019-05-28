@@ -76,7 +76,7 @@ nginx:
 
 letsencrypt:
   restart: always
-  image: kvaps/letsencrypt-webroot
+  image: defraglabs/docker-letsencrypt-webroot:v1.0.0
   volumes:
     - /etc/localtime:/etc/localtime:ro
     - /var/run/docker.sock:/var/run/docker.sock
