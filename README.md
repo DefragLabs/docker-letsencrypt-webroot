@@ -67,7 +67,6 @@ nginx:
     com.github.defraglabs.docker-letsencrypt-webroot.nginx: "true"
   volumes:
     - /etc/localtime:/etc/localtime:ro
-    - ./nginx:/etc/nginx:ro
     - ./letsencrypt/conf:/etc/letsencrypt
     - ./letsencrypt/html:/tmp/letsencrypt
   ports:
