@@ -82,8 +82,6 @@ letsencrypt:
     - /var/run/docker.sock:/var/run/docker.sock
     - ./letsencrypt/conf:/etc/letsencrypt
     - ./letsencrypt/html:/tmp/letsencrypt
-  links:
-    - nginx
   environment:
     - DOMAINS=example.com www.example.com
     - EMAIL=your@email.tld
